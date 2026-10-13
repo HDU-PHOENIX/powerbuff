@@ -125,7 +125,7 @@ std::optional<PowerRune> Buff_Detector::detect_24(cv::Mat & bgr_img)
 std::optional<PowerRune> Buff_Detector::detect(cv::Mat & bgr_img)
 {
   /// onnx 模型检测
-
+  //TODO:把resuilt的结果变成统一的
   std::vector<YOLO11_BUFF::Object> results = MODE_.get_onecandidatebox(bgr_img);
 
   /// 处理未获得的情况

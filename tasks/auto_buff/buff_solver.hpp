@@ -50,7 +50,7 @@ private:
   //   {},
   //   {}};  // 单位：米
 
-  // TODO
+  // TODO//todo
   const std::vector<cv::Point3f> OBJECT_POINTS = {
     cv::Point3f(0, 0, 827e-3), cv::Point3f(0, 127e-3, 700e-3),
     cv::Point3f(0, 0, 573e-3), cv::Point3f(0, -127e-3, 700e-3),
