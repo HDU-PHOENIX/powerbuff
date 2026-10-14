@@ -40,7 +40,7 @@ namespace auto_buff{
             float confidence = 0.0f;
             float quality = 0.0f;
             cv::Point2f center{0.0f, 0.0f};
-            std::vector<cv::Point2f> keypoints;
+            std::vector<cv::Point2f> keypoints;//好诡异阿，怎么center是2,交点0341（顺时针）的顺序阿？
             std::vector<float> kpt_confs;
         };
     
