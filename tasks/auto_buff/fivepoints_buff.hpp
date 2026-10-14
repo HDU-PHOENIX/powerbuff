@@ -30,12 +30,11 @@ namespace auto_buff{
     const std::vector<std::string> VIDEO_EXTS = {".mp4", ".avi", ".mov", ".mkv"};
 
     
-
+    
     class fivepoints_buff{
         public:
         
-
-        struct Detection
+        struct Detection // FivePoints 模型的单个目标检测结果
         {
             int class_id = -1;
             float confidence = 0.0f;
@@ -44,8 +43,9 @@ namespace auto_buff{
             std::vector<cv::Point2f> keypoints;
             std::vector<float> kpt_confs;
         };
-
-        struct TimingRecord
+    
+        
+        struct TimingRecord  // 单张图像或单帧视频的处理耗时记录
         {
             std::string name;
             int detections = 0;
@@ -57,7 +57,7 @@ namespace auto_buff{
             float total_time = 0.0f;
         };
 
-        struct PerformanceStats
+        struct PerformanceStats  // 模型推理测试的整体性能统计信息
         {
             int total_images = 0;
             int total_detections = 0;
@@ -130,19 +130,20 @@ namespace auto_buff{
                 nms_dist_threshold_(nms_dist_threshold),
                 min_valid_kpts_(min_valid_kpts){}
 
-        
+            //对输入图像进行等比例缩放和填充，使其符合模型的输入尺寸，并记录缩放比例与填充量。
             void preprocess_letterbox(const cv::Mat &src, cv::Mat &dst, float &scale, int &pad_w, int &pad_h){}
-            std::vector<Detection> infer(const cv::Mat &image, TimingRecord &rec){}
-            std::vector<Detection> postprocess(float scale, int pad_w, int pad_h, int orig_w, int orig_h){}
-            std::vector<Detection> nms(std::vector<Detection> &detections){}
-            void draw(cv::Mat &image, const std::vector<Detection> &detections) const{}
-            float warmup(const cv::Mat &image, int iterations = 10){}
+            
+            std::vector<Detection> infer(const cv::Mat &image, TimingRecord &rec){}//执行完整的模型推理流程，包括图像预处理、模型推理和检测结果后处理，并记录耗时。
+            std::vector<Detection> postprocess(float scale, int pad_w, int pad_h, int orig_w, int orig_h){}//解析模型输出，将预测结果转换为原始图像坐标系下的检测结果。
+            std::vector<Detection> nms(std::vector<Detection> &detections){}//通过非极大值抑制（NMS）去除重叠度较高的冗余检测框，保留较优的检测结果。
+            void draw(cv::Mat &image, const std::vector<Detection> &detections) const{}//将检测结果绘制到输入图像上，用于可视化检测框、类别等信息。
+            float warmup(const cv::Mat &image, int iterations = 10){}//使用输入图像重复执行指定次数的推理，以预热模型并测量预热阶段的平均耗时。
 
         private:
-            std::vector<std::string> read_class_names_from_model(const std::shared_ptr<ov::Model> &model) const{}
+            std::vector<std::string> read_class_names_from_model(const std::shared_ptr<ov::Model> &model) const{}//从 OpenVINO 模型的元数据中读取类别名称，并返回类别名称列表。
 
-            void resolve_head_dims(int num_classes_override, int num_keypoints_override){}
-            void ensure_class_names(){}
+            void resolve_head_dims(int num_classes_override, int num_keypoints_override){}//根据模型输出维度及用户指定的参数，确定检测头中的类别数量和关键点数量。
+            void ensure_class_names(){}//检查类别名称是否已正确初始化，并在缺失时尝试补全或生成默认类别名称。
 
             ov::CompiledModel compiled_model_;
             ov::InferRequest infer_request_;
