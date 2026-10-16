@@ -86,47 +86,12 @@ void Buff_Detector::handle_lose()
   status_ = TEM_LOSE;
 }
 
-std::optional<PowerRune> Buff_Detector::detect_24(cv::Mat & bgr_img)
-{
-  /// onnx 模型检测
-
-  std::vector<YOLO11_BUFF::Object> results = MODE_.get_multicandidateboxes(bgr_img);
-
-  /// 处理未获得的情况
-
-  if (results.empty()) {
-    handle_lose();
-    return std::nullopt;
-  }
-
-  /// results转扇叶FanBlade
-
-  std::vector<FanBlade> fanblades;
-  for (auto & result : results) fanblades.emplace_back(FanBlade(result.kpt, result.kpt[4], _light));
-
-  /// 生成PowerRune
-  auto r_center = get_r_center(fanblades, bgr_img);
-  PowerRune powerrune(fanblades, r_center, last_powerrune_);
-
-  /// handle error
-  if (powerrune.is_unsolve()) {
-    handle_lose();
-    return std::nullopt;
-  }
-
-  status_ = TRACK;
-  lose_ = 0;
-  std::optional<PowerRune> P;
-  P.emplace(powerrune);
-  last_powerrune_ = P;
-  return P;
-}
 
 std::optional<PowerRune> Buff_Detector::detect(cv::Mat & bgr_img)
 {
   /// onnx 模型检测
-  //TODO:把resuilt的结果变成统一的
-  std::vector<YOLO11_BUFF::Object> results = MODE_.get_onecandidatebox(bgr_img);
+  //TODO:把result的结果变成统一的
+  std::vector<standardized_output::standard_Detection> results = MODE_.getDetection(bgr_img);
 
   /// 处理未获得的情况
 
@@ -163,7 +128,7 @@ std::optional<PowerRune> Buff_Detector::detect_debug(cv::Mat & bgr_img, cv::Poin
 {
   /// onnx 模型检测
 
-  std::vector<YOLO11_BUFF::Object> results = MODE_.get_multicandidateboxes(bgr_img);
+  std::vector<standardized_output::standard_Detection> results = MODE_.getDetection(bgr_img);
 
   /// 处理未获得的情况
 
