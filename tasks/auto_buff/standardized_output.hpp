@@ -23,7 +23,9 @@ namespace auto_buff{
             float prob;
         };//yolo11的object和fivepoints的detection都统一到这里来，以后其他的也统一到这里来
 
-        std::vector<standard_Detection> getDetection(cv::Mat);
+        std::vector<standard_Detection> getDetection(cv::Mat){
+
+        };
 
         standardized_output (const std::string & config){
             const auto yaml = YAML::LoadFile(config);
@@ -48,10 +50,42 @@ namespace auto_buff{
         > model_;
 
         std::vector<standard_Detection> convert(
-            const std::vector<YOLO11_BUFF::Object> &results);
+            const std::vector<YOLO11_BUFF::Object> &results){
+                std::vector<standard_Detection> detections;
+                detections.reserve(results.size());
+
+                for(const auto& result:results){
+                    standard_Detection det;
+                    det.kpt=result.kpt;
+                    det.label=result.label;
+                    det.prob=result.prob;
+
+                    detections.push_back(det);
+                }
+
+                return detections;
+            };
 
         std::vector<standard_Detection> convert(
-            const std::vector<fivepoints_buff::Detection> &results);
+            const std::vector<fivepoints_buff::Detection> &results){
+                std::vector<standard_Detection> detections;
+                detections.reserve(results.size());
+
+                for(const auto& result:results){
+                    standard_Detection det;
+                    det.kpt.resize(5);
+
+                    //角点对应的顺序暂定
+                    det.kpt[0]=result.keypoints[0];
+                    det.kpt[1]=result.keypoints[1];
+                    det.kpt[2]=result.keypoints[4];
+                    det.kpt[3]=result.keypoints[3];
+                    det.kpt[4]=result.keypoints[2];
+
+                    det.label=result.class_id;
+                    det.prob=result.confidence;//还不确定是用confidence还是quality
+                }
+            };
         };
 }
 
