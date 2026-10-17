@@ -14,6 +14,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <yaml-cpp/yaml.h>
 
 namespace auto_buff{
     const int DEFAULT_KPT_DIM = 3;
@@ -129,6 +130,7 @@ namespace auto_buff{
                 kpt_conf_threshold_(kpt_conf_threshold),
                 nms_dist_threshold_(nms_dist_threshold),
                 min_valid_kpts_(min_valid_kpts){}
+            fivepoints_buff(const std::string&config){};
 
             //对输入图像进行等比例缩放和填充，使其符合模型的输入尺寸，并记录缩放比例与填充量。
             void preprocess_letterbox(const cv::Mat &src, cv::Mat &dst, float &scale, int &pad_w, int &pad_h){}

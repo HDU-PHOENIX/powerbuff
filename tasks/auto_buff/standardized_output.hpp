@@ -23,8 +23,25 @@ namespace auto_buff{
             float prob;
         };//yolo11的object和fivepoints的detection都统一到这里来，以后其他的也统一到这里来
 
-        std::vector<standard_Detection> getDetection(cv::Mat){
+        std::vector<standard_Detection> getDetection(cv::Mat&image){
+            if(image.empty()){
+                return {};
+            }
 
+            if(auto* model=std::get_if<std::unique_ptr<YOLO11_BUFF>>(&model_)){
+                cv::Mat input=image.clone();
+                auto results=(*model)->get_multicandidateboxes(input);
+                //auto results=(*model)->get_onecandidatebox(input);
+
+                return convert(results);
+            }
+
+            if(auto* model=std::get_if<std::unique_ptr<fivepoints_buff>>(&model_)){
+                cv::Mat input=image.clone();
+                auto results=(*model)->getlastdetection(input);
+                
+                return convert(results);
+            }
         };
 
         standardized_output (const std::string & config){
