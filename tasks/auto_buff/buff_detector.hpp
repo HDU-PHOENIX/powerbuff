@@ -3,6 +3,7 @@
 
 #include <yaml-cpp/yaml.h>
 
+#include <variant>
 #include <deque>
 #include <optional>
 

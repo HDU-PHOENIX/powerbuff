@@ -107,7 +107,12 @@ std::optional<PowerRune> Buff_Detector::detect(cv::Mat & bgr_img)
   fanblades.emplace_back(FanBlade(result.kpt, result.kpt[4], _light));
 
   /// 生成PowerRune
-  auto r_center = get_r_center(fanblades, bgr_img);
+  cv::Point2f r_center;
+  if(std::get_if<std::unique_ptr<fivepoints_buff>>(&MODE_.model_)){
+    r_center=result.kpt[4];
+  }else if(std::get_if<std::unique_ptr<YOLO11_BUFF>>(&MODE_.model_)){
+    r_center = get_r_center(fanblades, bgr_img);
+  }
   PowerRune powerrune(fanblades, r_center, last_powerrune_);
 
   /// handle error

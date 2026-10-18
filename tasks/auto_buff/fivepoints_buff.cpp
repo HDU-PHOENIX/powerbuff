@@ -437,4 +437,8 @@ namespace auto_buff{
         }
     }
 
+    std::vector<fivepoints_buff::Detection>  fivepoints_buff::getlastdetection(const cv::Mat& img){
+
+    };
+
 }
