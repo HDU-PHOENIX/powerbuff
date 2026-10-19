@@ -1,10 +1,10 @@
-#深大开源模型 -> Sc_vision
+# 深大开源模型 -> Sc_vision
 
 在尽可能不修改Sc_vision原处理逻辑的情况下加入深大开源的模型
 
 ---
 
-##基本说明
+## 基本说明
 
 1.保留了‘fivepoints_infer’,以便独立测试模型效果。
 具体使用方法详见[深大原仓库README](https://github.com/SZURPVision/RuneDetectionModel)。
@@ -18,6 +18,6 @@
 
 ---
 
-##致谢
+## 致谢
 
 深圳大学RobotPilots战队
