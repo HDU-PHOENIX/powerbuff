@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(io)
+
+find_package(ament_cmake REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(serial_driver REQUIRED)
-
 add_subdirectory(serial)
 
 # 创建目标 io

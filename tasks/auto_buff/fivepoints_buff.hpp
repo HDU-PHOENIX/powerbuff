@@ -119,27 +119,16 @@ namespace auto_buff{
             }
         };
 
-
-            fivepoints_buff(const std::string &model_path, const std::string &device = "AUTO",
-                            int num_classes_override = -1, int num_keypoints_override = -1,
-                            float conf_threshold = DEFAULT_CONF_THRESHOLD,
-                            float kpt_conf_threshold = DEFAULT_KPT_CONF_THRESHOLD,
-                            float nms_dist_threshold = DEFAULT_NMS_DIST_THRESHOLD,
-                            int min_valid_kpts = DEFAULT_MIN_VALID_KPTS)
-                : conf_threshold_(conf_threshold),
-                kpt_conf_threshold_(kpt_conf_threshold),
-                nms_dist_threshold_(nms_dist_threshold),
-                min_valid_kpts_(min_valid_kpts){}
             fivepoints_buff(const std::string&config){};
 
             //对输入图像进行等比例缩放和填充，使其符合模型的输入尺寸，并记录缩放比例与填充量。
-            void preprocess_letterbox(const cv::Mat &src, cv::Mat &dst, float &scale, int &pad_w, int &pad_h){}
+            void preprocess_letterbox(const cv::Mat &src, cv::Mat &dst, float &scale, int &pad_w, int &pad_h);
             
-            std::vector<Detection> infer(const cv::Mat &image, TimingRecord &rec){}//执行完整的模型推理流程，包括图像预处理、模型推理和检测结果后处理，并记录耗时。
-            std::vector<Detection> postprocess(float scale, int pad_w, int pad_h, int orig_w, int orig_h){}//解析模型输出，将预测结果转换为原始图像坐标系下的检测结果。
-            std::vector<Detection> nms(std::vector<Detection> &detections){}//通过非极大值抑制（NMS）去除重叠度较高的冗余检测框，保留较优的检测结果。
-            void draw(cv::Mat &image, const std::vector<Detection> &detections) const{}//将检测结果绘制到输入图像上，用于可视化检测框、类别等信息。
-            float warmup(const cv::Mat &image, int iterations = 10){}//使用输入图像重复执行指定次数的推理，以预热模型并测量预热阶段的平均耗时。
+            std::vector<Detection> infer(const cv::Mat &image, TimingRecord &rec);//执行完整的模型推理流程，包括图像预处理、模型推理和检测结果后处理，并记录耗时。
+            std::vector<Detection> postprocess(float scale, int pad_w, int pad_h, int orig_w, int orig_h);//解析模型输出，将预测结果转换为原始图像坐标系下的检测结果。
+            std::vector<Detection> nms(std::vector<Detection> &detections);//通过非极大值抑制（NMS）去除重叠度较高的冗余检测框，保留较优的检测结果。
+            void draw(cv::Mat &image, const std::vector<Detection> &detections) const;//将检测结果绘制到输入图像上，用于可视化检测框、类别等信息。
+            float warmup(const cv::Mat &image, int iterations = 10);//使用输入图像重复执行指定次数的推理，以预热模型并测量预热阶段的平均耗时。
 
             std::vector<Detection> getlastdetection(cv::Mat &img);//Todo:把完整的检测过程完善了
 

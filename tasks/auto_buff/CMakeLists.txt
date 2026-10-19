@@ -31,6 +31,7 @@ target_link_libraries(
     auto_buff
     PUBLIC
         tools
+        io
         openvino::runtime
         Eigen3::Eigen
         Ceres::ceres

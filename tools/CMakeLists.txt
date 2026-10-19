@@ -14,4 +14,12 @@ add_library(tools STATIC
     crc.cpp
 )
 
-target_link_libraries(tools PUBLIC fmt::fmt spdlog::spdlog)
+target_link_libraries(
+    tools 
+    PUBLIC 
+        fmt::fmt spdlog::spdlog)
+target_link_libraries(
+    tools
+    PUBLIC
+        Eigen3::Eigen
+)

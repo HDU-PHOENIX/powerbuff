@@ -6,76 +6,6 @@ namespace fs = std::filesystem;
 
 namespace auto_buff{
 
-    fivepoints_buff::fivepoints_buff(const std::string &model_path, const std::string &device = "AUTO",
-                       int num_classes_override = -1, int num_keypoints_override = -1,
-                       float conf_threshold = DEFAULT_CONF_THRESHOLD,
-                       float kpt_conf_threshold = DEFAULT_KPT_CONF_THRESHOLD,
-                       float nms_dist_threshold = DEFAULT_NMS_DIST_THRESHOLD,
-                       int min_valid_kpts = DEFAULT_MIN_VALID_KPTS)
-        : conf_threshold_(conf_threshold),
-          kpt_conf_threshold_(kpt_conf_threshold),
-          nms_dist_threshold_(nms_dist_threshold),
-          min_valid_kpts_(min_valid_kpts)
-    {
-        ov::Core core;
-        std::shared_ptr<ov::Model> model = core.read_model(model_path);
-        class_names_ = read_class_names_from_model(model);
-        const auto model_input_shape = model->input().get_shape();
-
-        if (model_input_shape.size() != 4)
-        {
-            throw std::runtime_error("模型输入非4维 (NCHW)");
-        }
-        input_height_ = static_cast<int>(model_input_shape[2]);
-        input_width_ = static_cast<int>(model_input_shape[3]);
-
-        // PrePostProcessor 配置 (BGR u8 NHWC -> RGB f32 [0,1] NCHW)
-        auto ppp = ov::preprocess::PrePostProcessor(model);
-        ppp.input().tensor()
-            .set_element_type(ov::element::u8)
-            .set_layout("NHWC")
-            .set_color_format(ov::preprocess::ColorFormat::BGR);
-        ppp.input().preprocess()
-            .convert_element_type(ov::element::f32)
-            .convert_color(ov::preprocess::ColorFormat::RGB)
-            .scale(255.0f);
-        ppp.input().model().set_layout("NCHW");
-        model = ppp.build();
-
-        compiled_model_ = core.compile_model(model, device,
-                                             ov::hint::performance_mode(ov::hint::PerformanceMode::LATENCY));
-        infer_request_ = compiled_model_.create_infer_request();
-
-        const auto output_shape = compiled_model_.output().get_shape();
-        if (output_shape.size() != 3)
-        {
-            throw std::runtime_error("模型输出维度非3维 ([N,C,A] 或 [N,A,C])");
-        }
-
-        // 识别输出布局 [N,C,A] 或 [N,A,C]
-        if (output_shape[1] <= 256 && output_shape[2] >= 100)
-        {
-            output_layout_nca_ = true;
-            output_channels_ = static_cast<int>(output_shape[1]);
-            num_anchors_ = static_cast<int>(output_shape[2]);
-        }
-        else
-        {
-            output_layout_nca_ = false;
-            num_anchors_ = static_cast<int>(output_shape[1]);
-            output_channels_ = static_cast<int>(output_shape[2]);
-        }
-
-        resolve_head_dims(num_classes_override, num_keypoints_override);
-        ensure_class_names();
-
-        std::cout << "[Info] 模型初始化成功 (Device: " << device << ")\n"
-                  << "       输入尺寸: " << input_width_ << "x" << input_height_
-                  << " | 布局: " << (output_layout_nca_ ? "[N,C,A]" : "[N,A,C]")
-                  << " | 通道数: " << output_channels_
-                  << " (类别: " << num_classes_ << ", 关键点: " << num_keypoints_ << ")\n";
-    }
-
     fivepoints_buff::fivepoints_buff(const std::string&config){
         auto yaml = YAML::LoadFile(config);
         std::string model_path = yaml["model"].as<std::string>();
@@ -455,6 +385,8 @@ namespace auto_buff{
         cv::putText(
         img, cv::format("FPS: %.2f", 1.0 / t), cv::Point(20, 40), cv::FONT_HERSHEY_PLAIN, 2.0,
         cv::Scalar(255, 0, 0), 2, 8);
+
+        return results;
     };
 
 }
