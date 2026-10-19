@@ -119,7 +119,7 @@ namespace auto_buff{
             }
         };
 
-            fivepoints_buff(const std::string&config){};
+            fivepoints_buff(const std::string&config);
 
             //对输入图像进行等比例缩放和填充，使其符合模型的输入尺寸，并记录缩放比例与填充量。
             void preprocess_letterbox(const cv::Mat &src, cv::Mat &dst, float &scale, int &pad_w, int &pad_h);
@@ -133,10 +133,10 @@ namespace auto_buff{
             std::vector<Detection> getlastdetection(cv::Mat &img);//Todo:把完整的检测过程完善了
 
         private:
-            std::vector<std::string> read_class_names_from_model(const std::shared_ptr<ov::Model> &model) const{}//从 OpenVINO 模型的元数据中读取类别名称，并返回类别名称列表。
+            std::vector<std::string> read_class_names_from_model(const std::shared_ptr<ov::Model> &model)const;//从 OpenVINO 模型的元数据中读取类别名称，并返回类别名称列表。
 
-            void resolve_head_dims(int num_classes_override, int num_keypoints_override){}//根据模型输出维度及用户指定的参数，确定检测头中的类别数量和关键点数量。
-            void ensure_class_names(){}//检查类别名称是否已正确初始化，并在缺失时尝试补全或生成默认类别名称。
+            void resolve_head_dims(int num_classes_override, int num_keypoints_override);//根据模型输出维度及用户指定的参数，确定检测头中的类别数量和关键点数量。
+            void ensure_class_names();//检查类别名称是否已正确初始化，并在缺失时尝试补全或生成默认类别名称。
 
             ov::CompiledModel compiled_model_;
             ov::InferRequest infer_request_;

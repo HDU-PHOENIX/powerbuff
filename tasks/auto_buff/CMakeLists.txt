@@ -10,6 +10,7 @@ add_library(
     buff_aimer.cpp
     buff_target.cpp
     yolo11_buff.cpp
+    fivepoints_buff.cpp
 )
 
 # ============================================================

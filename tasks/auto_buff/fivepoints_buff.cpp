@@ -265,7 +265,7 @@ namespace auto_buff{
         }
     }
 
-    float fivepoints_buff::warmup(const cv::Mat &image, int iterations = 10)
+    float fivepoints_buff::warmup(const cv::Mat &image, int iterations )
     {
         if (iterations <= 0)
             return 0.0f;
