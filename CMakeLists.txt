@@ -42,6 +42,7 @@ include_directories(
 
 add_subdirectory(tools)
 add_subdirectory(tasks/auto_buff)
+add_subdirectory(tasks/auto_aim)
 
 # ============================================================
 # auto_buff_test：能量机关测试程序
@@ -56,6 +57,7 @@ target_link_libraries(
     auto_buff_test
     PRIVATE
         auto_buff
+        auto_aim
         tools
         ${OpenCV_LIBS}
         openvino::runtime

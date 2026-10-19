@@ -90,7 +90,6 @@ void Buff_Detector::handle_lose()
 std::optional<PowerRune> Buff_Detector::detect(cv::Mat & bgr_img)
 {
   /// onnx 模型检测
-  //TODO:把result的结果变成统一的
   std::vector<standardized_output::standard_Detection> results = MODE_.getDetection(bgr_img);
 
   /// 处理未获得的情况

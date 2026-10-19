@@ -1,5 +1,7 @@
 #include "fivepoints_buff.hpp"
 
+#include "tools/logger.hpp"
+
 namespace fs = std::filesystem;
 
 namespace auto_buff{
@@ -437,8 +439,22 @@ namespace auto_buff{
         }
     }
 
-    std::vector<fivepoints_buff::Detection>  fivepoints_buff::getlastdetection(const cv::Mat& img){
+    std::vector<fivepoints_buff::Detection>  fivepoints_buff::getlastdetection(cv::Mat& img){
+        if (img.empty()) {
+            tools::logger()->warn("Empty img!, camera drop!");
+            return std::vector<fivepoints_buff::Detection> ();
+        }
+        const int64 start = cv::getTickCount();
 
+        TimingRecord rec;
+        std::vector<Detection> results;
+
+        results=infer(img,rec);
+        draw(img,results);
+        const float t = (cv::getTickCount() - start) / static_cast<float>(cv::getTickFrequency());
+        cv::putText(
+        img, cv::format("FPS: %.2f", 1.0 / t), cv::Point(20, 40), cv::FONT_HERSHEY_PLAIN, 2.0,
+        cv::Scalar(255, 0, 0), 2, 8);
     };
 
 }

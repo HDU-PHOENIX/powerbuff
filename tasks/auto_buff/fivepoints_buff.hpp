@@ -141,7 +141,7 @@ namespace auto_buff{
             void draw(cv::Mat &image, const std::vector<Detection> &detections) const{}//将检测结果绘制到输入图像上，用于可视化检测框、类别等信息。
             float warmup(const cv::Mat &image, int iterations = 10){}//使用输入图像重复执行指定次数的推理，以预热模型并测量预热阶段的平均耗时。
 
-            std::vector<Detection> getlastdetection(const cv::Mat &img);//Todo:把完整的检测过程完善了
+            std::vector<Detection> getlastdetection(cv::Mat &img);//Todo:把完整的检测过程完善了
 
         private:
             std::vector<std::string> read_class_names_from_model(const std::shared_ptr<ov::Model> &model) const{}//从 OpenVINO 模型的元数据中读取类别名称，并返回类别名称列表。
