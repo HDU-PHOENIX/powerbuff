@@ -34,18 +34,18 @@ namespace auto_buff{
             }
 
             if(auto* model=std::get_if<std::unique_ptr<YOLO11_BUFF>>(&model_)){
-                cv::Mat input=image.clone();
-                auto results=(*model)->get_multicandidateboxes(input);
+                cv::Mat img=image.clone();
+                auto results=(*model)->get_multicandidateboxes(img);
                 //auto results=(*model)->get_onecandidatebox(input);
 
                 return convert(results);
-            }
-
-            if(auto* model=std::get_if<std::unique_ptr<fivepoints_buff>>(&model_)){
-                cv::Mat input=image.clone();
-                auto results=(*model)->getlastdetection(input);
+            }else if(auto* model=std::get_if<std::unique_ptr<fivepoints_buff>>(&model_)){
+                cv::Mat img=image.clone();
+                auto results=(*model)->getlastdetection(img);
                 
                 return convert(results);
+            }else{
+                return {};
             }
         };
 
@@ -66,7 +66,7 @@ namespace auto_buff{
             }
                 };
         private:
-        
+
         std::vector<standard_Detection> convert(
             const std::vector<YOLO11_BUFF::Object> &results){
                 std::vector<standard_Detection> detections;
@@ -93,7 +93,7 @@ namespace auto_buff{
                     standard_Detection det;
                     det.kpt.resize(6);
 
-                    //角点对应的顺序暂定
+                    //角点对应的顺序暂定，逆时针
                     det.kpt[0]=result.keypoints[0];
                     det.kpt[1]=result.keypoints[1];
                     det.kpt[2]=result.keypoints[4];
@@ -101,12 +101,15 @@ namespace auto_buff{
                     det.kpt[4]=(result.keypoints[0]+
                                 result.keypoints[1]+
                                 result.keypoints[4]+
-                                result.keypoints[3])/2;
-                    det.kpt[5]=result.keypoints[2];
+                                result.keypoints[3])/4;//扇叶中心
+                    det.kpt[5]=result.keypoints[2];//旋转中心
 
                     det.label=result.class_id;
                     det.prob=result.confidence;//还不确定是用confidence还是quality
+
+                    detections.push_back(std::move(det));
                 }
+                return detections;
             };
         };
 }

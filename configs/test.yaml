@@ -186,8 +186,8 @@ Q_pitch: [8e6,1e3]   # [角度误差惩罚, 角速度误差惩罚]
 R_pitch: [1]
 
 #####-----buff_detector参数-----#####
-model: "assets/yolo11_buff_int8.xml"
-
+#model: "assets/yolo11_buff_int8.xml"
+molel: "assets/model-0624.xml"
 #####-----buff_aimer参数-----#####
 fire_gap_time: 0.700   # s
 predict_time: 0.120     # s

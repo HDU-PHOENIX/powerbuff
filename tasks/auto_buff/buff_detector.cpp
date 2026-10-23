@@ -79,11 +79,12 @@ cv::Point2f Buff_Detector::get_r_center(std::vector<FanBlade> & fanblades, cv::M
 void Buff_Detector::handle_lose()
 {
   lose_++;
+  status_ = TEM_LOSE;
   if (lose_ >= LOSE_MAX) {
     status_ = LOSE;
     last_powerrune_ = std::nullopt;
   }
-  status_ = TEM_LOSE;
+
 }
 
 
@@ -108,7 +109,7 @@ std::optional<PowerRune> Buff_Detector::detect(cv::Mat & bgr_img)
   /// 生成PowerRune
   cv::Point2f r_center;
   if(std::get_if<std::unique_ptr<fivepoints_buff>>(&MODE_.model_)){
-    r_center=result.kpt[4];
+    r_center=result.kpt[5];
   }else if(std::get_if<std::unique_ptr<YOLO11_BUFF>>(&MODE_.model_)){
     r_center = get_r_center(fanblades, bgr_img);
   }
@@ -145,7 +146,13 @@ std::optional<PowerRune> Buff_Detector::detect_debug(cv::Mat & bgr_img, cv::Poin
     fanblades_t.emplace_back(FanBlade(result.kpt, result.kpt[4], _light));
 
   /// 计算r_center,筛选fanblade
-  auto r_center = get_r_center(fanblades_t, bgr_img);
+  cv::Point2f r_center;
+  if(std::get_if<std::unique_ptr<fivepoints_buff>>(&MODE_.model_)){
+    r_center=results[0].kpt[5];//有待商榷
+  }else if(std::get_if<std::unique_ptr<YOLO11_BUFF>>(&MODE_.model_)){
+    r_center = get_r_center(fanblades_t, bgr_img);
+  }
+
   std::vector<FanBlade> fanblades;
   for (auto & fanblade : fanblades_t) {
     if (cv::norm((fanblade.center - r_center) - v) < 10 || results.size() == 1) {
